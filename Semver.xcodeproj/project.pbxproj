@@ -432,6 +432,7 @@
 				BB81DC291EB8270000AFF879 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		BB81DC2A1EB8270000AFF879 /* Build configuration list for PBXNativeTarget "SemverTests" */ = {
 			isa = XCConfigurationList;
@@ -440,6 +441,7 @@
 				BB81DC2C1EB8270000AFF879 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
