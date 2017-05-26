@@ -19,11 +19,11 @@ public enum SemverParseError: Error {
 
 public struct Semver {
     
-    public var major: Int
-    public var minor: Int
-    public var patch: Int
-    public var preRelease: PreRelease?
-    public var metadata: String?
+    public let major: Int
+    public let minor: Int
+    public let patch: Int
+    public let preRelease: PreRelease?
+    public let metadata: String?
     
     public init(major: Int, minor: Int, patch: Int, preRelease: PreRelease? = nil, metadata: String? = nil) {
         self.major = major
@@ -50,26 +50,34 @@ public struct Semver {
         minor = normalVersionComponents[1]
         patch = normalVersionComponents[2]
         
-        if scanner.isAtEnd { return }
+        if scanner.isAtEnd {
+            preRelease = nil
+            metadata = nil
+            return
+        }
         if string[string.index(string.startIndex, offsetBy: scanner.scanLocation)] == "-" {
             scanner.scanLocation += 1
             var preReleaseInfo:NSString? = nil
             guard scanner.scanUpTo("+", into: &preReleaseInfo) else {
                 throw SemverParseError.parsePreReleaseVersionFailed
             }
-            
             preRelease = try PreRelease(preReleaseInfo! as String)
+        } else {
+            preRelease = nil
         }
         
-        if scanner.isAtEnd { return }
+        if scanner.isAtEnd {
+            metadata = nil
+            return
+        }
         let index = string.index(string.startIndex, offsetBy: scanner.scanLocation + 1)
-        let metadata = string.substring(from: index)
-        for component in metadata.components(separatedBy: ".") {
+        let meta = string.substring(from: index)
+        for component in meta.components(separatedBy: ".") {
             guard !component.isEmpty, component.rangeOfCharacter(from: CharacterSet.semverAllowed.inverted) == nil else {
                 throw SemverParseError.invalidCharacterInMetadata
             }
         }
-        self.metadata = metadata
+        self.metadata = meta
         return
     }
 }
