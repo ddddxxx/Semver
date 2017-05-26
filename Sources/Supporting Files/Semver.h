@@ -6,7 +6,7 @@
 //  Copyright © 2017年 ddddxxx. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for Semver.
 FOUNDATION_EXPORT double SemverVersionNumber;
