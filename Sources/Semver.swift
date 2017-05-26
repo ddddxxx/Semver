@@ -172,7 +172,7 @@ extension Semver: Comparable {
         switch (lhs.preRelease, rhs.preRelease) {
         case let (left?, right?):
             return left < right
-        case (_, nil):
+        case (_?, nil):
             return true
         default:
             return false
