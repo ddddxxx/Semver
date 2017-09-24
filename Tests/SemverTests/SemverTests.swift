@@ -1,9 +1,18 @@
 //
 //  SemverTests.swift
-//  SemverTests
 //
-//  Created by 邓翔 on 2017/5/2.
-//  Copyright © 2017年 ddddxxx. All rights reserved.
+//  This file is part of Semver.
+//  Copyright (c) 2017 Xander Deng
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
 //
 
 import XCTest
@@ -13,23 +22,23 @@ class SemverTests: XCTestCase {
     
     func testParserErrors() {
         for str in badVersionStrings {
-            XCTAssertThrowsError(try Semver(str), "'\(str)' should throws")
+            XCTAssertNil(Semver(str), "'\(str)' should be nil")
         }
     }
     
     func testVersionEquality() {
         for (left, right) in notEqualVersionPairs {
-            XCTAssertNotEqual(try! Semver(left), try! Semver(right), "'\(left)' and '\(right)' should not be equal")
+            XCTAssertNotEqual(Semver(left)!, Semver(right)!, "'\(left)' and '\(right)' should not be equal")
         }
         
         for (left, right) in equalVersionPairs {
-            XCTAssertEqual(try! Semver(left), try! Semver(right), "'\(left)' and '\(right)' should be equal")
+            XCTAssertEqual(Semver(left)!, Semver(right)!, "'\(left)' and '\(right)' should be equal")
         }
     }
     
     func testVersionComparison() {
-        let sortedVersions = versionStringsToBeSort.map {try! Semver($0)}.sorted()
-        let preSortedVersions = preSortedVersionStrings.map {try! Semver($0)}
+        let sortedVersions = versionStringsToBeSort.map { Semver($0)! }.sorted()
+        let preSortedVersions = preSortedVersionStrings.map { Semver($0)! }
         
         XCTAssertEqual(sortedVersions, preSortedVersions, "Versions not sorted properly!")
     }
@@ -53,6 +62,8 @@ let badVersionStrings = [
     "2.3.5+h..3",
     // no pre-release info
     "2.2.1-+hello",
+    // version number too large
+    "9223372036854775808.0.0",
 ]
 
 let notEqualVersionPairs: [(String, String)] = [
