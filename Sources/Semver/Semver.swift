@@ -24,7 +24,8 @@ public struct Semver {
 }
 
 extension Semver: Equatable {
-
+    
+    // FIXME: Swift semantic equality or SemVer semantic equality
     public static func ==(lhs: Semver, rhs: Semver) -> Bool {
         return lhs.major == rhs.major &&
             lhs.minor == rhs.minor &&
@@ -34,7 +35,7 @@ extension Semver: Equatable {
 }
     
 extension Semver: Comparable {
-
+    
     public static func <(lhs: Semver, rhs: Semver) -> Bool {
         guard lhs.major == rhs.major else {
             return lhs.major < rhs.major
@@ -56,6 +57,7 @@ extension Semver: Comparable {
             if lpr == rpr {
                 continue
             }
+            // FIXME: big integer
             switch (Int(lpr), Int(rpr)) {
             case (_?, nil):
                 return true
