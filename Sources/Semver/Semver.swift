@@ -8,326 +8,119 @@
 
 import Foundation
 
-public enum SemverParseError: Error {
-    case emptyString
-    case invalidCharacterInNormalVersion
-    case invalidCharacterInPreReleaseVersion
-    case invalidCharacterInMetadata
-    case parseNormalVersionFailed
-    case parsePreReleaseVersionFailed
-}
-
 public struct Semver {
     
-    public let major: Int
-    public let minor: Int
-    public let patch: Int
-    public let preRelease: PreRelease?
+    public let (major, minor, patch): (Int, Int, Int)
+    public let prerelease: [String]
     public let metadata: String?
     
-    public init(major: Int, minor: Int, patch: Int, preRelease: PreRelease? = nil, metadata: String? = nil) {
+    public init(major: Int, minor: Int, patch: Int, prerelease: [String] = [], metadata: String? = nil) {
         self.major = major
         self.minor = minor
         self.patch = patch
-        self.preRelease = preRelease
+        self.prerelease = prerelease
         self.metadata = metadata
     }
-    
-    public init(_ string:String) throws {
-        if string.isEmpty {
-            throw SemverParseError.emptyString
-        }
-        
-        let scanner = Scanner(string: string)
-        var normalVersionString: NSString? = nil
-        guard scanner.scanUpToCharacters(from: CharacterSet(charactersIn: "-+"), into: &normalVersionString) else {
-            throw SemverParseError.parseNormalVersionFailed
-        }
-        
-        let normalVersionComponents = try parseNormalVersionString(normalVersionString! as String)
-        
-        major = normalVersionComponents[0]
-        minor = normalVersionComponents[1]
-        patch = normalVersionComponents[2]
-        
-        if scanner.isAtEnd {
-            preRelease = nil
-            metadata = nil
-            return
-        }
-        if string[string.index(string.startIndex, offsetBy: scanner.scanLocation)] == "-" {
-            scanner.scanLocation += 1
-            var preReleaseInfo:NSString? = nil
-            guard scanner.scanUpTo("+", into: &preReleaseInfo) else {
-                throw SemverParseError.parsePreReleaseVersionFailed
-            }
-            preRelease = try PreRelease(preReleaseInfo! as String)
-        } else {
-            preRelease = nil
-        }
-        
-        if scanner.isAtEnd {
-            metadata = nil
-            return
-        }
-        let index = string.index(string.startIndex, offsetBy: scanner.scanLocation + 1)
-        let meta = string[index...]
-        for component in meta.components(separatedBy: ".") {
-            guard !component.isEmpty, component.rangeOfCharacter(from: CharacterSet.semverAllowed.inverted) == nil else {
-                throw SemverParseError.invalidCharacterInMetadata
-            }
-        }
-        self.metadata = String(meta)
-        return
-    }
 }
 
-// MARK: - Nested Types
+extension Semver: Equatable {
 
-extension Semver {
-    
-    public enum PreRelease {
-        case alpha(Int?)
-        case beta(Int?)
-        case arbitrary([Identifier])
-    }
-}
-
-extension Semver.PreRelease {
-    
-    public enum Identifier {
-        case number(Int)
-        case string(String)
-    }
-}
-
-extension Semver.PreRelease {
-    
-    public init(_ components: [String]) throws {
-        if components.isEmpty {
-            throw SemverParseError.parsePreReleaseVersionFailed
-        } else if components.count == 1 {
-            switch components[0] {
-            case "alpha":
-                self = .alpha(nil)
-            case "beta":
-                self = .beta(nil)
-            default:
-                break
-            }
-        } else if components.count == 2 {
-            switch (components[0], Int(components[1])) {
-            case ("alpha", let v?):
-                self = .alpha(v)
-            case ("beta", let v?):
-                self = .beta(v)
-            default:
-                break
-            }
-        }
-        
-        let arr = try components.map { (str) -> Semver.PreRelease.Identifier in
-            guard !str.isEmpty, str.rangeOfCharacter(from: CharacterSet.semverAllowed.inverted) == nil else {
-                throw SemverParseError.invalidCharacterInMetadata
-            }
-            
-            if let num = Int(str) {
-                return .number(num)
-            }
-            return .string(str)
-        }
-        
-        self = .arbitrary(arr)
-    }
-    
-    public init(_ string: String) throws {
-        try self.init(string.components(separatedBy: "."))
-    }
-}
-
-// MARK: - Comparision
-
-extension Semver: Comparable {
-    
     public static func ==(lhs: Semver, rhs: Semver) -> Bool {
         return lhs.major == rhs.major &&
             lhs.minor == rhs.minor &&
             lhs.patch == rhs.patch &&
-            lhs.preRelease == rhs.preRelease
+            lhs.prerelease == rhs.prerelease
     }
+}
     
+extension Semver: Comparable {
+
     public static func <(lhs: Semver, rhs: Semver) -> Bool {
         guard lhs.major == rhs.major else {
             return lhs.major < rhs.major
         }
-        
+
         guard lhs.minor == rhs.minor else {
             return lhs.minor < rhs.minor
         }
-        
+
         guard lhs.patch == rhs.patch else {
             return lhs.patch < rhs.patch
         }
         
-        switch (lhs.preRelease, rhs.preRelease) {
-        case let (left?, right?):
-            return left < right
-        case (_?, nil):
-            return true
-        default:
-            return false
+        guard lhs.prerelease.isEmpty == rhs.prerelease.isEmpty else {
+            return rhs.prerelease.isEmpty
         }
-    }
-}
-
-extension Semver.PreRelease: Comparable {
-    
-    public static func ==(lhs: Semver.PreRelease, rhs: Semver.PreRelease) -> Bool {
-        switch (lhs, rhs) {
-        case let (.alpha(left), .alpha(right)):
-            return left == right
-        case let (.beta(left), .beta(right)):
-            return left == right
-        case let (.arbitrary(left), .arbitrary(right)):
-            return left == right
-        default:
-            return false
-        }
-    }
-    
-    public static func <(lhs: Semver.PreRelease, rhs: Semver.PreRelease) -> Bool {
-        let lArray = lhs.array
-        let rArray = rhs.array
         
-        for (left, right) in zip(lArray, rArray) {
-            if left == right {
+        for (lpr, rpr) in zip(lhs.prerelease, rhs.prerelease) {
+            if lpr == rpr {
                 continue
             }
-            return left < right
+            switch (Int(lpr), Int(rpr)) {
+            case (_?, nil):
+                return true
+            case (nil, _?):
+                return false
+            case let (l?, r?):
+                return l < r
+            case (nil, nil):
+                return lpr < rpr
+            }
         }
         
-        return lArray.count < rArray.count
-    }
-    
-    private var array: [Identifier] {
-        switch self {
-        case .alpha(nil):
-            return [.string("alpha")]
-        case let .alpha(v?):
-            return [.string("alpha"), .number(v)]
-        case .beta(nil):
-            return [.string("beta")]
-        case let .beta(v?):
-            return [.string("beta"), .number(v)]
-        case let .arbitrary(arr):
-            return arr
-        }
+        return lhs.prerelease.count < rhs.prerelease.count
     }
 }
 
-extension Semver.PreRelease.Identifier: Comparable {
+extension Semver: LosslessStringConvertible {
     
-    public static func ==(lhs: Semver.PreRelease.Identifier, rhs: Semver.PreRelease.Identifier) -> Bool {
-        switch (lhs, rhs) {
-        case let (.number(left), .number(right)):
-            return left == right
-        case let (.string(left), .string(right)):
-            return left == right
-        default:
-            return false
+    private static let semverRegexPattern = "^v?(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-([\\da-zA-Z\\-]+(?:\\.[\\da-zA-Z\\-]+)*))?(?:\\+([\\da-zA-Z\\-]+(?:\\.[\\da-zA-Z\\-]+)*))?$"
+    private static let semverRegex = try! NSRegularExpression(pattern: semverRegexPattern)
+    
+    public init?(_ description:String) {
+        guard let match = Semver.semverRegex.firstMatch(in: description) else {
+            return nil
         }
+        major = Int(description[match.range(at: 1)]!)!
+        minor = Int(description[match.range(at: 2)]!)!
+        patch = Int(description[match.range(at: 3)]!)!
+        prerelease = description[match.range(at: 4)]?.components(separatedBy: ".") ?? []
+        metadata = description[match.range(at: 5)]
     }
-    
-    
-    public static func <(lhs: Semver.PreRelease.Identifier, rhs: Semver.PreRelease.Identifier) -> Bool {
-        switch (lhs, rhs) {
-        case (.number, .string):
-            return true
-        case (.string, .number):
-            return false
-        case let (.number(left), .number(right)):
-            return left < right
-        case let (.string(left), .string(right)):
-            return left < right
-        }
-    }
-}
-
-// MARK: - String Conversion
-
-extension Semver: CustomStringConvertible {
     
     public var description: String {
         var result = "\(major).\(minor).\(patch)"
-        if let preRelease = preRelease {
-            result += "-\(preRelease)"
+        if !prerelease.isEmpty {
+            result += "-" + prerelease.joined(separator: ".")
         }
         if let metadata = metadata {
-            result += "+\(metadata)"
+            result += "+" + metadata
         }
         return result
     }
 }
 
-extension Semver.PreRelease: CustomStringConvertible {
+// MARK: - Utilities
+
+extension String {
     
-    public var description: String {
-        switch self {
-        case let .alpha(x?):
-            return "alpha.\(x)"
-        case .alpha(nil):
-            return "alpha"
-        case let .beta(x?):
-            return "beta.\(x)"
-        case .beta(nil):
-            return "beta"
-        case let .arbitrary(ids):
-            return ids.map({ $0.description }).joined(separator: ".")
+    fileprivate subscript(nsRange: NSRange) -> String? {
+        guard let r = Range(nsRange, in: self) else {
+            return nil
         }
+        return String(self[r])
     }
 }
 
-extension Semver.PreRelease.Identifier: CustomStringConvertible {
+extension NSRegularExpression {
     
-    public var description: String {
-        switch self {
-        case let .number(n):
-            return "\(n)"
-        case let .string(s):
-            return s
-        }
-    }
-}
-
-// MARK: -
-
-private func parseNormalVersionString(_ string:String) throws -> [Int] {
-    let components = string.components(separatedBy: ".")
-    
-    let result = try components.map { (str) -> Int in
-        guard let num = Int(str) else {
-            throw SemverParseError.invalidCharacterInNormalVersion
-        }
-        return num
+    fileprivate func matches(in string: String, options: NSRegularExpression.MatchingOptions = []) -> [NSTextCheckingResult] {
+        let r = NSRange(string.startIndex..<string.endIndex, in: string)
+        return matches(in: string, options: options, range: r)
     }
     
-    guard result.count == 3 else {
-        throw SemverParseError.parseNormalVersionFailed
-    }
-    
-    return result
-}
-
-extension CharacterSet {
-    
-    private static var englishLetters: CharacterSet {
-        let lowercase = CharacterSet(charactersIn: "a"..."z")
-        let uppercase = CharacterSet(charactersIn: "A"..."Z")
-        return lowercase.union(uppercase)
-    }
-    
-    fileprivate static var semverAllowed: CharacterSet {
-        let hyphen = CharacterSet(charactersIn: "-.")
-        return hyphen.union(.englishLetters).union(.decimalDigits)
+    fileprivate func firstMatch(in string: String, options: NSRegularExpression.MatchingOptions = []) -> NSTextCheckingResult? {
+        let r = NSRange(string.startIndex..<string.endIndex, in: string)
+        return firstMatch(in: string, options: options, range: r)
     }
 }

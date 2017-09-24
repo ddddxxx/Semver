@@ -13,23 +13,23 @@ class SemverTests: XCTestCase {
     
     func testParserErrors() {
         for str in badVersionStrings {
-            XCTAssertThrowsError(try Semver(str), "'\(str)' should throws")
+            XCTAssertNil(Semver(str), "'\(str)' should be nil")
         }
     }
     
     func testVersionEquality() {
         for (left, right) in notEqualVersionPairs {
-            XCTAssertNotEqual(try! Semver(left), try! Semver(right), "'\(left)' and '\(right)' should not be equal")
+            XCTAssertNotEqual(Semver(left)!, Semver(right)!, "'\(left)' and '\(right)' should not be equal")
         }
         
         for (left, right) in equalVersionPairs {
-            XCTAssertEqual(try! Semver(left), try! Semver(right), "'\(left)' and '\(right)' should be equal")
+            XCTAssertEqual(Semver(left)!, Semver(right)!, "'\(left)' and '\(right)' should be equal")
         }
     }
     
     func testVersionComparison() {
-        let sortedVersions = versionStringsToBeSort.map {try! Semver($0)}.sorted()
-        let preSortedVersions = preSortedVersionStrings.map {try! Semver($0)}
+        let sortedVersions = versionStringsToBeSort.map { Semver($0)! }.sorted()
+        let preSortedVersions = preSortedVersionStrings.map { Semver($0)! }
         
         XCTAssertEqual(sortedVersions, preSortedVersions, "Versions not sorted properly!")
     }
