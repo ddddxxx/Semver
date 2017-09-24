@@ -53,6 +53,8 @@ let badVersionStrings = [
     "2.3.5+h..3",
     // no pre-release info
     "2.2.1-+hello",
+    // version number too large
+    "9223372036854775808.0.0",
 ]
 
 let notEqualVersionPairs: [(String, String)] = [
