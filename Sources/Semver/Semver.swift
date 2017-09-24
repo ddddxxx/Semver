@@ -81,9 +81,14 @@ extension Semver: LosslessStringConvertible {
         guard let match = Semver.semverRegex.firstMatch(in: description) else {
             return nil
         }
-        major = Int(description[match.range(at: 1)]!)!
-        minor = Int(description[match.range(at: 2)]!)!
-        patch = Int(description[match.range(at: 3)]!)!
+        guard let major = Int(description[match.range(at: 1)]!),
+            let minor = Int(description[match.range(at: 2)]!),
+            let patch = Int(description[match.range(at: 3)]!) else {
+            return nil
+        }
+        self.major = major
+        self.minor = minor
+        self.patch = patch
         prerelease = description[match.range(at: 4)]?.components(separatedBy: ".") ?? []
         metadata = description[match.range(at: 5)]
     }
