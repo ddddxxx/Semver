@@ -71,13 +71,13 @@ public struct Semver {
             return
         }
         let index = string.index(string.startIndex, offsetBy: scanner.scanLocation + 1)
-        let meta = string.substring(from: index)
+        let meta = string[index...]
         for component in meta.components(separatedBy: ".") {
             guard !component.isEmpty, component.rangeOfCharacter(from: CharacterSet.semverAllowed.inverted) == nil else {
                 throw SemverParseError.invalidCharacterInMetadata
             }
         }
-        self.metadata = meta
+        self.metadata = String(meta)
         return
     }
 }
