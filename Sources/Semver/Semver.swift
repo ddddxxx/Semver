@@ -62,24 +62,16 @@ extension Semver: Comparable {
             return rhs.prerelease.isEmpty
         }
         
-        for (lpr, rpr) in zip(lhs.prerelease, rhs.prerelease) {
-            if lpr == rpr {
-                continue
-            }
+        return lhs.prerelease.lexicographicallyPrecedes(rhs.prerelease) { lpr, rpr in
+            if lpr == rpr { return false }
             // FIXME: big integer
             switch (Int(lpr), Int(rpr)) {
-            case (_?, nil):
-                return true
-            case (nil, _?):
-                return false
-            case let (l?, r?):
-                return l < r
-            case (nil, nil):
-                return lpr < rpr
+            case let (l?, r?):  return l < r
+            case (_?, nil):     return true
+            case (nil, _?):     return false
+            case (nil, nil):    return lpr < rpr
             }
         }
-        
-        return lhs.prerelease.count < rhs.prerelease.count
     }
 }
 
