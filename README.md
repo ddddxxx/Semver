@@ -1,7 +1,8 @@
 ## Semver
 
-![platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20iOS%20%7C%20tvOS%20%7C%20watchOS-lightgrey.svg)
+[![Build Status](https://travis-ci.org/ddddxxx/Semver.svg?branch=master)](https://travis-ci.org/ddddxxx/Semver)
 ![supports](https://img.shields.io/badge/supports-Carthage%20%7C%20Swift_PM-brightgreen.svg)
+![platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20iOS%20%7C%20tvOS%20%7C%20watchOS-lightgrey.svg)
 
 Semver is a Swift implementation of the [Semantic Versioning](http://semver.org/).
 
