@@ -77,7 +77,7 @@ extension Semver: Comparable {
 
 extension Semver: LosslessStringConvertible {
     
-    private static let semverRegexPattern = "^v?(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-([\\da-zA-Z\\-]+(?:\\.[\\da-zA-Z\\-]+)*))?(?:\\+([\\da-zA-Z\\-]+(?:\\.[\\da-zA-Z\\-]+)*))?$"
+    private static let semverRegexPattern = "^v?(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([\\da-zA-Z\\-]+(?:\\.[\\da-zA-Z\\-]+)*))?$"
     private static let semverRegex = try! NSRegularExpression(pattern: semverRegexPattern)
     
     public init?(_ description:String) {
