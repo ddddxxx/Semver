@@ -65,7 +65,7 @@ extension Semver: Comparable {
         return lhs.prerelease.lexicographicallyPrecedes(rhs.prerelease) { lpr, rpr in
             if lpr == rpr { return false }
             // FIXME: big integer
-            switch (Int(lpr), Int(rpr)) {
+            switch (UInt(lpr), UInt(rpr)) {
             case let (l?, r?):  return l < r
             case (_?, nil):     return true
             case (nil, _?):     return false
