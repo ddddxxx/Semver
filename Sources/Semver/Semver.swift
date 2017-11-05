@@ -1,7 +1,7 @@
 //
 //  Semver.swift
 //
-//  This file is part of Semver.
+//  This file is part of Semver. - https://github.com/ddddxxx/Semver
 //  Copyright (c) 2017 Xander Deng
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,6 +24,7 @@ public struct Semver {
     public let metadata: String?
     
     public init(major: Int, minor: Int, patch: Int, prerelease: [String] = [], metadata: String? = nil) {
+        // FIXME: deal with invalid arguments
         self.major = major
         self.minor = minor
         self.patch = patch
@@ -34,7 +35,7 @@ public struct Semver {
 
 extension Semver: Equatable {
     
-    // FIXME: Swift semantic equality or SemVer semantic equality
+    // TODO: Swift semantic equality or Semver semantic equality
     public static func ==(lhs: Semver, rhs: Semver) -> Bool {
         return lhs.major == rhs.major &&
             lhs.minor == rhs.minor &&
@@ -45,6 +46,7 @@ extension Semver: Equatable {
     
 extension Semver: Comparable {
     
+    // TODO: Swift semantic comparability or Semver semantic comparability
     public static func <(lhs: Semver, rhs: Semver) -> Bool {
         guard lhs.major == rhs.major else {
             return lhs.major < rhs.major
@@ -64,7 +66,7 @@ extension Semver: Comparable {
         
         return lhs.prerelease.lexicographicallyPrecedes(rhs.prerelease) { lpr, rpr in
             if lpr == rpr { return false }
-            // FIXME: big integer
+            // FIXME: deal with big integers
             switch (UInt(lpr), UInt(rpr)) {
             case let (l?, r?):  return l < r
             case (_?, nil):     return true
@@ -87,7 +89,8 @@ extension Semver: LosslessStringConvertible {
         guard let major = Int(description[match.range(at: 1)]!),
             let minor = Int(description[match.range(at: 2)]!),
             let patch = Int(description[match.range(at: 3)]!) else {
-            return nil
+                // version number too large
+                return nil
         }
         self.major = major
         self.minor = minor
@@ -101,10 +104,21 @@ extension Semver: LosslessStringConvertible {
         if !prerelease.isEmpty {
             result += "-" + prerelease.joined(separator: ".")
         }
-        if let metadata = metadata {
+        if let metadata = metadata,
+            !metadata.isEmpty {
             result += "+" + metadata
         }
         return result
+    }
+}
+
+extension Semver: ExpressibleByStringLiteral {
+    
+    public init(stringLiteral value: String) {
+        guard let v = Semver(value) else {
+            fatalError("failed to initialize `Semver` using string literal \"\(value)\".")
+        }
+        self = v
     }
 }
 

@@ -1,7 +1,7 @@
 //
 //  SemverTests.swift
 //
-//  This file is part of Semver.
+//  This file is part of Semver. - https://github.com/ddddxxx/Semver
 //  Copyright (c) 2017 Xander Deng
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
