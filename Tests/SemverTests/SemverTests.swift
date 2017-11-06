@@ -1,7 +1,7 @@
 //
 //  SemverTests.swift
 //
-//  This file is part of Semver.
+//  This file is part of Semver. - https://github.com/ddddxxx/Semver
 //  Copyright (c) 2017 Xander Deng
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -46,23 +46,31 @@ class SemverTests: XCTestCase {
 
 let badVersionStrings = [
     // no enough elements
-    "", "2", "2.1",
-    "5.2-alpha.0", "5-alpha.0",
-    // invalid character
-    "*.1", "5.1.^", "5.#.2",
-    "2.2.1-alpha.*", "2.2.1-3.*.boom", "12.256.3-3.*.boom.45",
-    "2.2.1+h*23", "2.2.1-alpha.0+alkj&^",
+    "",
+    "1", ".1", "1.", ".",
+    "1.1", "1.1.", "1..1", ".1.1", "1..", "..",
+    "1.1-alpha", "1.1.-alpha", "1.1.1.-alpha",
+    "1.1+42", "1.1.+42",
+    "1.1.1-alpha..0",
+    "1.1.1+a..1",
     // too many elements
-    "5.0.0.0",
-    // .- sequence
-    "5.0.0.-alpha.0", "5.0.-alpha.0", "5.-alpha.0",
+    "1.1.1.1", "1.1.1.1.1",
     // empty components
-    "5.0..", ".3.1",
-    "5.0.0-alpha..0",
-    "2.3.5+h..3",
-    // no pre-release info
-    "2.2.1-+hello",
+    "1.1.1-", "1.1.1+",
+    "1.1.1-+123", "1.1.1-beta+",
+    // leading zeroes
+    "01.1.1", "001.1.1", "1.01.1", "1.01.1", "1.1.01", "1.1.001",
+    "1.1.1-01", "1.1.1-001",
+    "1.1.1-alpha.01", "1.1.1-alpha.001",
+    // invalid character
+    "-1.1.1", "1.-1.1", "1.1.-1",
+    "a.b.c", "1.a.b", "1.1.a", "1.a.1", "a.1.1",
+    "*.1.1", "1.#.1", "1.1.^",
+    "1.1.1-*", "1.1.1-alpha.#", "1.1.1-1.^.1",
+    "1.1.1+h*23", "1.1.1-alpha.0+a#1",
+    "1.2.3-蛤.foo", "1.2.3+😄.foo",
     // version number too large
+    // FIXME: is this an invalid version?
     "9223372036854775808.0.0",
 ]
 
@@ -91,6 +99,8 @@ let equalVersionPairs: [(String, String)] = [
     ("3.0.0-alpha.0",   "3.0.0-alpha.0+metadata"),
     ("3.0.0-beta.0",    "3.0.0-beta.0+metadata"),
     ("3.0.0-boo",       "3.0.0-boo+metadata"),
+    ("3.0.0",           "v3.0.0"),
+    ("3.0.0-alpha.0",   "v3.0.0-alpha.0+metadata"),
 ]
 
 let versionStringsToBeSort = [
@@ -98,12 +108,14 @@ let versionStringsToBeSort = [
     "0.0.1-alpha.0",
     "0.0.1",
     "0.0.2-alpha.0",
+    "2.0.0--2",
     "0.0.2-alpha.0.1",
     "0.0.2",
     "0.0.3-aaa.11",
     "0.0.3-aaa.2",
     "0.0.3-aaa",
     "0.0.3-alpha.1",
+    "2.0.0--1",
     "0.1.0-beta.2",
     "0.1.0-beta.3",
     "0.1.0",
@@ -146,5 +158,7 @@ let preSortedVersionStrings = [
     "1.1.0",
     "1.2.0",
     "2.0.0-1",
+    "2.0.0--1",
+    "2.0.0--2",
     "2.0.0-alpha.0"
 ]
