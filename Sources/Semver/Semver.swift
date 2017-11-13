@@ -43,6 +43,21 @@ extension Semver: Equatable {
             lhs.prerelease == rhs.prerelease
     }
 }
+
+extension Semver: Hashable {
+    
+    public var hashValue: Int {
+        var seed = 0
+        hashCombine(seed: &seed, value: major)
+        hashCombine(seed: &seed, value: minor)
+        hashCombine(seed: &seed, value: patch)
+        seed = prerelease.reduce(into: seed, hashCombine)
+        if let metadata = metadata {
+            hashCombine(seed: &seed, value: metadata)
+        }
+        return seed
+    }
+}
     
 extension Semver: Comparable {
     
@@ -123,6 +138,18 @@ extension Semver: ExpressibleByStringLiteral {
 }
 
 // MARK: - Utilities
+
+private func hashCombine<T: Hashable>(seed: inout Int, value: T) {
+    let us = UInt(bitPattern: seed)
+    let uv = UInt(bitPattern: value.hashValue)
+    let mul: UInt = 0x9ddfea08eb382d69
+    var a = (uv ^ us) &* mul
+    a ^= (a >> 47)
+    var b = (us ^ a) &* mul
+    b ^= (b >> 47)
+    let result = b &* mul
+    seed = Int(bitPattern: result)
+}
 
 extension String {
     
