@@ -45,6 +45,14 @@ let package = Package(
 )
 ```
 
+### [CocoaPods](https://cocoapods.org)
+
+Add the project to your `Podfile`:
+
+```
+pod 'Semver2'
+```
+
 ## License
 
 Semver is available under the MIT license. See the [LICENSE file](LICENSE).
