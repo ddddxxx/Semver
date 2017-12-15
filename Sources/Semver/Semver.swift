@@ -140,15 +140,30 @@ extension Semver: ExpressibleByStringLiteral {
 // MARK: - Utilities
 
 private func hashCombine<T: Hashable>(seed: inout Int, value: T) {
-    let us = UInt(bitPattern: seed)
-    let uv = UInt(bitPattern: value.hashValue)
-    let mul: UInt = 0x9ddfea08eb382d69
-    var a = (uv ^ us) &* mul
+    if MemoryLayout<Int>.size == 64 {
+        var us = UInt64(UInt(bitPattern: seed))
+        let uv = UInt64(UInt(bitPattern: value.hashValue))
+        hashCombine(seed: &us, value: uv)
+        seed = Int(truncatingIfNeeded: Int64(bitPattern: us))
+    } else {
+        var us = UInt32(UInt(bitPattern: seed))
+        let uv = UInt32(UInt(bitPattern: value.hashValue))
+        hashCombine(seed: &us, value: uv)
+        seed = Int(truncatingIfNeeded: Int32(bitPattern: us))
+    }
+}
+
+private func hashCombine(seed: inout UInt32, value: UInt32) {
+    seed ^= (value &+ 0x9e3779b9 &+ (seed<<6) &+ (seed>>2))
+}
+
+private func hashCombine(seed: inout UInt64, value: UInt64) {
+    let mul: UInt64 = 0x9ddfea08eb382d69
+    var a = (value ^ seed) &* mul
     a ^= (a >> 47)
-    var b = (us ^ a) &* mul
+    var b = (seed ^ a) &* mul
     b ^= (b >> 47)
-    let result = b &* mul
-    seed = Int(bitPattern: result)
+    seed = b &* mul
 }
 
 extension String {
