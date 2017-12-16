@@ -62,11 +62,8 @@ extension Semver: Hashable {
         hashCombine(seed: &seed, value: major)
         hashCombine(seed: &seed, value: minor)
         hashCombine(seed: &seed, value: patch)
-        seed = prerelease.reduce(into: seed, hashCombine)
-        if let metadata = metadata {
-            hashCombine(seed: &seed, value: metadata)
-        }
-        return seed
+        // since `==` presents semantic versioning equality, metadata should not be used for hashing
+        return prerelease.reduce(into: seed, hashCombine)
     }
 }
     
