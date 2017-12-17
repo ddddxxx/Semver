@@ -17,6 +17,7 @@
 
 import Foundation
 
+/// Represents a version conforming to [Semantic Versioning 2.0.0](http://semver.org).
 public struct Semver {
     
     public let (major, minor, patch): (Int, Int, Int)
@@ -35,12 +36,22 @@ public struct Semver {
 
 extension Semver: Equatable {
     
-    // TODO: Swift semantic equality or Semver semantic equality
+    /// Semver semantic equality. Build metadata is ignored.
     public static func ==(lhs: Semver, rhs: Semver) -> Bool {
         return lhs.major == rhs.major &&
             lhs.minor == rhs.minor &&
             lhs.patch == rhs.patch &&
             lhs.prerelease == rhs.prerelease
+    }
+    
+    /// Swift semantic equality.
+    public static func ===(lhs: Semver, rhs: Semver) -> Bool {
+        return (lhs == rhs) && (lhs.metadata == rhs.metadata)
+    }
+    
+    /// Swift semantic unequality.
+    public static func !==(lhs: Semver, rhs: Semver) -> Bool {
+        return !(lhs === rhs)
     }
 }
 
@@ -51,17 +62,13 @@ extension Semver: Hashable {
         hashCombine(seed: &seed, value: major)
         hashCombine(seed: &seed, value: minor)
         hashCombine(seed: &seed, value: patch)
-        seed = prerelease.reduce(into: seed, hashCombine)
-        if let metadata = metadata {
-            hashCombine(seed: &seed, value: metadata)
-        }
-        return seed
+        // since `==` presents semantic versioning equality, metadata should not be used for hashing
+        return prerelease.reduce(into: seed, hashCombine)
     }
 }
     
 extension Semver: Comparable {
     
-    // TODO: Swift semantic comparability or Semver semantic comparability
     public static func <(lhs: Semver, rhs: Semver) -> Bool {
         guard lhs.major == rhs.major else {
             return lhs.major < rhs.major
