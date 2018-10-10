@@ -57,6 +57,17 @@ extension Semver: Equatable {
 
 extension Semver: Hashable {
     
+    #if swift(>=4.2)
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(major)
+        hasher.combine(minor)
+        hasher.combine(patch)
+        hasher.combine(prerelease)
+    }
+    
+    #else
+    
     public var hashValue: Int {
         var seed = 0
         hashCombine(seed: &seed, value: major)
@@ -65,6 +76,8 @@ extension Semver: Hashable {
         // since `==` presents semantic versioning equality, metadata should not be used for hashing
         return prerelease.reduce(into: seed, hashCombine)
     }
+    
+    #endif
 }
     
 extension Semver: Comparable {
