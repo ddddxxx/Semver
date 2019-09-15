@@ -9,8 +9,7 @@ Semver is a Swift implementation of the [Semantic Versioning](http://semver.org/
 ## Requirements
 
 - macOS 10.9+ / iOS 8.0+ / tvOS 9.0+ / watchOS 2.0+
-- Xcode 9+
-- Swift 4.0+
+- Swift 5.0+
 
 ## Example
 
