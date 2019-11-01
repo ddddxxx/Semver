@@ -42,6 +42,12 @@ class SemverTests: XCTestCase {
         
         XCTAssertEqual(sortedVersions, preSortedVersions, "Versions not sorted properly!")
     }
+    
+    static var allTests = [
+        ("testParserErrors", testParserErrors),
+        ("testVersionEquality", testVersionEquality),
+        ("testVersionComparison", testVersionComparison),
+    ]
 }
 
 let badVersionStrings = [
