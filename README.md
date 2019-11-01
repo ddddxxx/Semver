@@ -1,14 +1,13 @@
 ## Semver
 
 [![Github CI Status](https://github.com/ddddxxx/Semver/workflows/CI/badge.svg)](https://github.com/ddddxxx/Semver/actions)
-![supports](https://img.shields.io/badge/supports-Carthage%20%7C%20Swift_PM-brightgreen.svg)
-![platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20iOS%20%7C%20tvOS%20%7C%20watchOS-lightgrey.svg)
+![supports](https://img.shields.io/badge/supports-Swift_PM%20%7C%20Carthage-brightgreen.svg)
+![platforms](https://img.shields.io/badge/platforms-Linux%20%7C%20macOS%20%7C%20iOS%20%7C%20tvOS%20%7C%20watchOS-lightgrey.svg)
 
 Semver is a Swift implementation of the [Semantic Versioning](http://semver.org/).
 
 ## Requirements
 
-- macOS 10.9+ / iOS 8.0+ / tvOS 9.0+ / watchOS 2.0+
 - Swift 5.0+
 
 ## Example
@@ -24,14 +23,6 @@ version > Semver("1.0.2+39f1d74")! // true
 
 ## Installation
 
-### [Carthage](https://github.com/Carthage/Carthage)
-
-Add the project to your `Cartfile`:
-
-```
-github "ddddxxx/Semver"
-```
-
 ### [Swift Package Manager](https://github.com/apple/swift-package-manager)
 
 Add the project to your `Package.swift` file:
@@ -42,6 +33,14 @@ let package = Package(
         .Package(url: "https://github.com/ddddxxx/Semver")
     ]
 )
+```
+
+### [Carthage](https://github.com/Carthage/Carthage)
+
+Add the project to your `Cartfile`:
+
+```
+github "ddddxxx/Semver"
 ```
 
 ### [CocoaPods](https://cocoapods.org)
