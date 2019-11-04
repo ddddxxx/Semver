@@ -7,7 +7,7 @@ jobs:
   Xcode:
     strategy:
       matrix:
-        # xcode_version: ['10.2','10.2.1','10.3','11']
+        xcode_version: ['10.2','10.2.1','10.3','11', '11.1']
         env:
           - platform: macOS
             destination: "platform=OS X"
@@ -23,7 +23,7 @@ jobs:
             action: build
     runs-on: macOS-10.14
     env:
-      # DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode_version }}.app
+      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode_version }}.app/Contents/Developer
       ACTION: ${{ matrix.env.action }}
       PROJECT: Semver.xcodeproj
       SCHEME: Semver-Package
@@ -42,12 +42,12 @@ jobs:
             -destination "$DESTINATION" | xcpretty
 
   SPMMac:
-    # strategy:
-    #   matrix:
-    #     xcode_version: ['10.2','10.2.1','10.3','11']
+    strategy:
+      matrix:
+        xcode_version: ['10.2','10.2.1','10.3','11', '11.1']
     runs-on: macOS-10.14
-    # env:
-    #   DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode_version }}.app
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode_version }}.app/Contents/Developer
     steps:
       - uses: actions/checkout@v1
       - name: Swift Version
