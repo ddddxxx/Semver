@@ -99,7 +99,7 @@ extension Semver: Comparable {
 
 extension Semver: LosslessStringConvertible {
     
-    private static let semverRegexPattern = "^v?(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([\\da-zA-Z\\-]+(?:\\.[\\da-zA-Z\\-]+)*))?$"
+    private static let semverRegexPattern = #"^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([\da-zA-Z\-]+(?:\.[\da-zA-Z\-]+)*))?$"#
     private static let semverRegex = try! NSRegularExpression(pattern: semverRegexPattern)
     
     public init?(_ description:String) {
@@ -136,7 +136,7 @@ extension Semver: ExpressibleByStringLiteral {
     
     public init(stringLiteral value: String) {
         guard let v = Semver(value) else {
-            fatalError("failed to initialize `Semver` using string literal \"\(value)\".")
+            fatalError("failed to initialize `Semver` using string literal '\(value)'.")
         }
         self = v
     }
@@ -144,9 +144,9 @@ extension Semver: ExpressibleByStringLiteral {
 
 // MARK: - Utilities
 
-extension String {
+private extension String {
     
-    fileprivate subscript(nsRange: NSRange) -> String? {
+    subscript(nsRange: NSRange) -> String? {
         guard let r = Range(nsRange, in: self) else {
             return nil
         }
@@ -154,14 +154,14 @@ extension String {
     }
 }
 
-extension NSRegularExpression {
+private extension NSRegularExpression {
     
-    fileprivate func matches(in string: String, options: NSRegularExpression.MatchingOptions = []) -> [NSTextCheckingResult] {
+    func matches(in string: String, options: NSRegularExpression.MatchingOptions = []) -> [NSTextCheckingResult] {
         let r = NSRange(string.startIndex..<string.endIndex, in: string)
         return matches(in: string, options: options, range: r)
     }
     
-    fileprivate func firstMatch(in string: String, options: NSRegularExpression.MatchingOptions = []) -> NSTextCheckingResult? {
+    func firstMatch(in string: String, options: NSRegularExpression.MatchingOptions = []) -> NSTextCheckingResult? {
         let r = NSRange(string.startIndex..<string.endIndex, in: string)
         return firstMatch(in: string, options: options, range: r)
     }
