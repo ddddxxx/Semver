@@ -32,6 +32,10 @@ public struct Semver {
         self.prerelease = prerelease
         self.metadata = metadata
     }
+    
+    public var isPrerelease: Bool {
+        return !prerelease.isEmpty
+    }
 }
 
 extension Semver: Equatable {
