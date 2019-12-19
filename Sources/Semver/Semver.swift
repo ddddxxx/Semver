@@ -20,17 +20,30 @@ import Foundation
 /// Represents a version conforming to [Semantic Versioning 2.0.0](http://semver.org).
 public struct Semver {
     
-    public let (major, minor, patch): (Int, Int, Int)
-    public let prerelease: [String]
-    public let metadata: String?
+    public let major: Int
     
-    public init(major: Int, minor: Int, patch: Int, prerelease: [String] = [], metadata: String? = nil) {
-        // FIXME: deal with invalid arguments
+    public let minor: Int
+    
+    public let patch: Int
+    
+    public let prerelease: [String]
+    
+    public let buildMetadata: [String]
+    
+    public init(major: Int, minor: Int, patch: Int, prerelease: [String] = [], buildMetadata: [String] = []) {
         self.major = major
         self.minor = minor
         self.patch = patch
         self.prerelease = prerelease
-        self.metadata = metadata
+        self.buildMetadata = buildMetadata
+    }
+    
+    public var prereleaseString: String? {
+        return prerelease.isEmpty ? nil : prerelease.joined(separator: ".")
+    }
+    
+    public var buildMetadataString: String? {
+        return buildMetadata.isEmpty ? nil : buildMetadata.joined(separator: ".")
     }
     
     public var isPrerelease: Bool {
@@ -50,7 +63,7 @@ extension Semver: Equatable {
     
     /// Swift semantic equality.
     public static func ===(lhs: Semver, rhs: Semver) -> Bool {
-        return (lhs == rhs) && (lhs.metadata == rhs.metadata)
+        return (lhs == rhs) && (lhs.buildMetadata == rhs.buildMetadata)
     }
     
     /// Swift semantic unequality.
@@ -120,7 +133,7 @@ extension Semver: LosslessStringConvertible {
         self.minor = minor
         self.patch = patch
         prerelease = description[match.range(at: 4)]?.components(separatedBy: ".") ?? []
-        metadata = description[match.range(at: 5)]
+        buildMetadata = description[match.range(at: 5)]?.components(separatedBy: ".") ?? []
     }
     
     public var description: String {
@@ -128,9 +141,8 @@ extension Semver: LosslessStringConvertible {
         if !prerelease.isEmpty {
             result += "-" + prerelease.joined(separator: ".")
         }
-        if let metadata = metadata,
-            !metadata.isEmpty {
-            result += "+" + metadata
+        if !buildMetadata.isEmpty {
+            result += "+" + buildMetadata.joined(separator: ".")
         }
         return result
     }
