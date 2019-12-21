@@ -114,6 +114,23 @@ extension Semver: Comparable {
     }
 }
 
+extension Semver: Codable {
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(description)
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let str = try container.decode(String.self)
+        guard let version = Semver(str) else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid semantic version")
+        }
+        self = version
+    }
+}
+
 extension Semver: LosslessStringConvertible {
     
     private static let semverRegexPattern = #"^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([\da-zA-Z\-]+(?:\.[\da-zA-Z\-]+)*))?$"#
