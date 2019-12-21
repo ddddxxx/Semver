@@ -152,7 +152,7 @@ extension Semver: ExpressibleByStringLiteral {
     
     public init(stringLiteral value: String) {
         guard let v = Semver(value) else {
-            fatalError("failed to initialize `Semver` using string literal '\(value)'.")
+            preconditionFailure("failed to initialize `Semver` using string literal '\(value)'.")
         }
         self = v
     }
