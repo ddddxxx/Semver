@@ -31,6 +31,13 @@ public struct Semver {
     public let buildMetadata: [String]
     
     public init(major: Int, minor: Int, patch: Int, prerelease: [String] = [], buildMetadata: [String] = []) {
+        assert(major >= 0, "major version '\(major)' must be non-negative integer.")
+        assert(minor >= 0, "minor version '\(minor)' must be non-negative integer.")
+        assert(patch >= 0, "patch version '\(patch)' must be non-negative integer.")
+        assert(prerelease.allSatisfy(validatePrereleaseIdentifier),
+               "pre-release identifiers '\(prerelease)' must comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-].")
+        assert(buildMetadata.allSatisfy(validateBuildMetadataIdentifier),
+               "build metadata identifiers '\(buildMetadata)' must comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-].")
         self.major = major
         self.minor = minor
         self.patch = patch
@@ -195,6 +202,26 @@ extension ProcessInfo {
 }
 
 // MARK: - Utilities
+
+private func validatePrereleaseIdentifier(_ str: String) -> Bool {
+    // TODO: validate leading zero
+    return validateBuildMetadataIdentifier(str)
+}
+
+private func validateBuildMetadataIdentifier(_ str: String) -> Bool {
+    return !str.isEmpty && str.unicodeScalars.allSatisfy(CharacterSet.semverIdentifierAllowed.contains)
+}
+
+private extension CharacterSet {
+    
+    static let semverIdentifierAllowed: CharacterSet = {
+        var set = CharacterSet(charactersIn: "0"..."9")
+        set.insert(charactersIn: "a"..."z")
+        set.insert(charactersIn: "A"..."Z")
+        set.insert("-")
+        return set
+    }()
+}
 
 private extension String {
     
