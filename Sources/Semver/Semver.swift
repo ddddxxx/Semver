@@ -95,19 +95,15 @@ extension Semver: Comparable {
         guard lhs.major == rhs.major else {
             return lhs.major < rhs.major
         }
-
         guard lhs.minor == rhs.minor else {
             return lhs.minor < rhs.minor
         }
-
         guard lhs.patch == rhs.patch else {
             return lhs.patch < rhs.patch
         }
-        
-        guard lhs.prerelease.isEmpty == rhs.prerelease.isEmpty else {
-            return rhs.prerelease.isEmpty
+        guard lhs.isPrerelease == rhs.isPrerelease else {
+            return lhs.isPrerelease
         }
-        
         return lhs.prerelease.lexicographicallyPrecedes(rhs.prerelease) { lpr, rpr in
             if lpr == rpr { return false }
             // FIXME: deal with big integers
