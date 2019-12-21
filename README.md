@@ -28,11 +28,9 @@ version > Semver("1.0.2+39f1d74")! // true
 Add the project to your `Package.swift` file:
 
 ```swift
-let package = Package(
-    dependencies: [
-        .Package(url: "https://github.com/ddddxxx/Semver")
-    ]
-)
+package.dependencies += [
+    .package(url: "https://github.com/ddddxxx/Semver", .upToNextMinor("0.2.0"))
+]
 ```
 
 ### [Carthage](https://github.com/Carthage/Carthage)
