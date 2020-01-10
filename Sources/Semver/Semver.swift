@@ -191,7 +191,7 @@ extension Bundle {
 extension ProcessInfo {
     
     @available(macOS 10.10, iOS 8.0, tvOS 9.0, watchOS 2.0, *)
-    var operatingSystemSemanticVersion: Semver {
+    public var operatingSystemSemanticVersion: Semver {
         let v = operatingSystemVersion
         return Semver(major: v.majorVersion, minor: v.minorVersion, patch: v.patchVersion)
     }
