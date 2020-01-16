@@ -208,8 +208,18 @@ extension ProcessInfo {
 // MARK: - Utilities
 
 private func validatePrereleaseIdentifier(_ str: String) -> Bool {
-    // TODO: validate leading zero
-    return validateBuildMetadataIdentifier(str)
+    guard !str.isEmpty else {
+        return true
+    }
+    let hasLeadingZero = str.hasPrefix("0")
+    var isNumber = true
+    for scalar in str.unicodeScalars {
+        guard CharacterSet.semverIdentifierAllowed.contains(scalar) else {
+            return false
+        }
+        isNumber = isNumber && CharacterSet.asciiDigits.contains(scalar)
+    }
+    return !(isNumber && hasLeadingZero)
 }
 
 private func validateBuildMetadataIdentifier(_ str: String) -> Bool {
@@ -225,6 +235,8 @@ private extension CharacterSet {
         set.insert("-")
         return set
     }()
+    
+    static let asciiDigits = CharacterSet(charactersIn: "0"..."9")
 }
 
 private extension String {
