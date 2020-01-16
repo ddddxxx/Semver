@@ -20,16 +20,22 @@ import Foundation
 /// Represents a version conforming to [Semantic Versioning 2.0.0](http://semver.org).
 public struct Semver {
     
+    /// The major version.
     public let major: Int
     
+    /// The minor version.
     public let minor: Int
     
+    /// The patch version.
     public let patch: Int
     
+    /// The pre-release identifiers (if any).
     public let prerelease: [String]
     
+    /// The build metadatas (if any).
     public let buildMetadata: [String]
     
+    /// Creates a version with the provided values.
     public init(major: Int, minor: Int, patch: Int, prerelease: [String] = [], buildMetadata: [String] = []) {
         assert(major >= 0, "major version '\(major)' must be non-negative integer.")
         assert(minor >= 0, "minor version '\(minor)' must be non-negative integer.")
@@ -45,14 +51,17 @@ public struct Semver {
         self.buildMetadata = buildMetadata
     }
     
+    /// A string representation of prerelease identifiers (if any).
     public var prereleaseString: String? {
         return prerelease.isEmpty ? nil : prerelease.joined(separator: ".")
     }
     
+    /// A string representation of build metadatas (if any).
     public var buildMetadataString: String? {
         return buildMetadata.isEmpty ? nil : buildMetadata.joined(separator: ".")
     }
     
+    /// A Boolean value indicating whether the version is pre-release version.
     public var isPrerelease: Bool {
         return !prerelease.isEmpty
     }
