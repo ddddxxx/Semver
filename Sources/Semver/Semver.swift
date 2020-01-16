@@ -36,14 +36,9 @@ public struct Semver {
     public let buildMetadata: [String]
     
     /// Creates a version with the provided values.
+    ///
+    /// The result is unchecked. Use `isValid` to validate the version.
     public init(major: Int, minor: Int, patch: Int, prerelease: [String] = [], buildMetadata: [String] = []) {
-        assert(major >= 0, "major version '\(major)' must be non-negative integer.")
-        assert(minor >= 0, "minor version '\(minor)' must be non-negative integer.")
-        assert(patch >= 0, "patch version '\(patch)' must be non-negative integer.")
-        assert(prerelease.allSatisfy(validatePrereleaseIdentifier),
-               "pre-release identifiers '\(prerelease)' must comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-].")
-        assert(buildMetadata.allSatisfy(validateBuildMetadataIdentifier),
-               "build metadata identifiers '\(buildMetadata)' must comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-].")
         self.major = major
         self.minor = minor
         self.patch = patch
@@ -64,6 +59,15 @@ public struct Semver {
     /// A Boolean value indicating whether the version is pre-release version.
     public var isPrerelease: Bool {
         return !prerelease.isEmpty
+    }
+    
+    /// A Boolean value indicating whether the version conforms to Semantic Versioning 2.0.0.
+    public var isValid: Bool {
+        return major >= 0
+            && minor >= 0
+            && patch >= 0
+            && prerelease.allSatisfy(validatePrereleaseIdentifier)
+            && buildMetadata.allSatisfy(validateBuildMetadataIdentifier)
     }
 }
 
