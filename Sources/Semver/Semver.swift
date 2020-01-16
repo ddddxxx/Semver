@@ -208,18 +208,11 @@ extension ProcessInfo {
 // MARK: - Utilities
 
 private func validatePrereleaseIdentifier(_ str: String) -> Bool {
-    guard !str.isEmpty else {
-        return true
+    guard validateBuildMetadataIdentifier(str) else {
+        return false
     }
-    let hasLeadingZero = str.hasPrefix("0")
-    var isNumber = true
-    for scalar in str.unicodeScalars {
-        guard CharacterSet.semverIdentifierAllowed.contains(scalar) else {
-            return false
-        }
-        isNumber = isNumber && CharacterSet.asciiDigits.contains(scalar)
-    }
-    return !(isNumber && hasLeadingZero)
+    let isNumeric = str.unicodeScalars.allSatisfy(CharacterSet.asciiDigits.contains)
+    return !(isNumeric && (str.first == "0") && (str.count > 1))
 }
 
 private func validateBuildMetadataIdentifier(_ str: String) -> Bool {
