@@ -114,17 +114,20 @@ extension Semver: Comparable {
         guard lhs.patch == rhs.patch else {
             return lhs.patch < rhs.patch
         }
-        guard lhs.isPrerelease == rhs.isPrerelease else {
-            return lhs.isPrerelease
+        guard lhs.isPrerelease else {
+            return false // Non-prerelease lhs >= potentially prerelease rhs
+        }
+        guard rhs.isPrerelease else {
+            return true // Prerelease lhs < non-prerelease rhs
         }
         return lhs.prerelease.lexicographicallyPrecedes(rhs.prerelease) { lpr, rpr in
             if lpr == rpr { return false }
             // FIXME: deal with big integers
             switch (UInt(lpr), UInt(rpr)) {
             case let (l?, r?):  return l < r
+            case (nil, nil):    return lpr < rpr
             case (_?, nil):     return true
             case (nil, _?):     return false
-            case (nil, nil):    return lpr < rpr
             }
         }
     }
