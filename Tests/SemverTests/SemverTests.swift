@@ -28,7 +28,7 @@ class SemverTests: XCTestCase {
     
     func testValidate() {
         func randArr<Element>(_ maxCount: Int, from source: [Element]) -> [Element] {
-            (0..<Int.random(in: 0..<maxCount)).map { _ in source.randomElement()! }
+            return (0..<Int.random(in: 0..<maxCount)).map { _ in return source.randomElement()! }
         }
         for _ in 0..<100 {
             let ver = Semver(major: goodVersionNumbers.randomElement()!,
