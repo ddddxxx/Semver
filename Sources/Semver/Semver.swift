@@ -61,7 +61,11 @@ public struct Semver {
         return !prerelease.isEmpty
     }
     
-    /// A Boolean value indicating whether the version conforms to Semantic Versioning 2.0.0.
+    /// A Boolean value indicating whether the version conforms to Semantic
+    /// Versioning 2.0.0.
+    ///
+    /// An invalid Semver can only be formed with the memberwise initializer
+    /// `Semver.init(major:minor:patch:prerelease:buildMetadata:)`.
     public var isValid: Bool {
         return major >= 0
             && minor >= 0
