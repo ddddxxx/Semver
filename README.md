@@ -10,7 +10,9 @@ Semver is a Swift implementation of the [Semantic Versioning](http://semver.org/
 
 - Swift 5.0+
 
-## Example
+## Usage
+
+### Quick Start
 
 ```swift
 import Semver
@@ -19,6 +21,34 @@ import Semver
 let version = Semver("v1.3.8-rc.1+build.3")!
 
 version > Semver("1.0.2+39f1d74")! // true
+```
+
+### Equality
+
+The `Equatable` conformance respect Semver semantic equality and ignore build metadata. This also affect `Comparable` and `Hashable`.
+
+You can use `===` and `!==` to take build metadata into account.
+
+```swift
+let v1 = Version("1.0.0+100")!
+let v2 = Version("1.0.0+200")!
+
+v1 == v2 // true
+v1 <= v2 // true
+v1.hashValue == v2.hashValue // true
+Set([v1, v2]).count == 1 // ❗️true
+
+v1 === v2 // false
+v1 !== v2 // true
+```
+
+### Validity Check
+
+The member wise initializer `Semver.init(major:minor:patch:prerelease:buildMetadata:)` doesn't perform validity checks on its fields. It's possible to form an invalid version. You can manually validate a version using `Semver.isValid`.
+
+```swift
+let version = Semver(major: 0, minor: 0, patch: -1) // invalid version 0.0.-1
+version.isValid // false
 ```
 
 ## Installation
@@ -39,14 +69,6 @@ Add the project to your `Cartfile`:
 
 ```
 github "ddddxxx/Semver"
-```
-
-### [CocoaPods](https://cocoapods.org)
-
-Add the project to your `Podfile`:
-
-```
-pod 'Semver2'
 ```
 
 ## License
