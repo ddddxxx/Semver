@@ -190,8 +190,8 @@ extension Semver: LosslessStringConvertible {
 
 extension Semver: ExpressibleByStringLiteral {
     
-    public init(stringLiteral value: String) {
-        guard let v = Semver(value) else {
+    public init(stringLiteral value: StaticString) {
+        guard let v = Semver(value.description) else {
             preconditionFailure("failed to initialize `Semver` using string literal '\(value)'.")
         }
         self = v

@@ -44,7 +44,9 @@ v1 !== v2 // true
 
 ### Validity Check
 
-The member wise initializer `Semver.init(major:minor:patch:prerelease:buildMetadata:)` doesn't perform validity checks on its fields. It's possible to form an invalid version. You can manually validate a version using `Semver.isValid`.
+The string initializer `Semver.init?(_:)` always produce valid version (or nil). The literal initializer `Semver.init(stringLiteral:)` only accept `StaticString` and crash when failed. 
+
+However, the member wise initializer `Semver.init(major:minor:patch:prerelease:buildMetadata:)` doesn't perform validity checks on its fields. It's possible to form an invalid version. You can manually validate a version using `Semver.isValid`.
 
 ```swift
 let version = Semver(major: 0, minor: 0, patch: -1) // invalid version 0.0.-1
@@ -70,6 +72,10 @@ Add the project to your `Cartfile`:
 ```
 github "ddddxxx/Semver"
 ```
+
+### Copy File
+
+This is a lightweight library contains only one file. You can simply copy/paste [the Semver file](Sources/Semver/Semver.swift) into your project.
 
 ## License
 
